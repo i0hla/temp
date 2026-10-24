@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>فيديوهات قدرات الجامعيين</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  
+  /* Palette Monochrome Premium */
+  --bg: #09090b;
+  --surface: #121215;
+  --surface-hover: #1c1c21;
+  --border: #27272a;
+  --border-focus: #52525b;
+  
+  --ink: #f4f4f5;
+  --muted: #a1a1aa;
+  --subtle: #71717a;
+  
+  --accent: #ffffff;
+  --accent-ink: #000000;
+  
+  --done: #10b981;
+  --done-bg: rgba(16, 185, 129, 0.12);
+  --done-border: rgba(16, 185, 129, 0.3);
+  
+  --focus: #ffffff;
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --surface-hover: #f0f0f3;
+  --border: #e4e4e7;
+  --border-focus: #a1a1aa;
+  
+  --ink: #09090b;
+  --muted: #52525b;
+  --subtle: #71717a;
+  
+  --accent: #09090b;
+  --accent-ink: #ffffff;
+  
+  --done: #059669;
+  --done-bg: rgba(5, 150, 105, 0.1);
+  --done-border: rgba(0, 0, 0, 0.15);
+  
+  --focus: #09090b;
+}
+
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+
+body {
+  margin: 0; min-height: 100%;
+  background: var(--bg); color: var(--ink);
+  font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+
+header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 700; margin: 0; letter-spacing: -0.5px; }
+.sub { color: var(--muted); margin: 6px 0 0; font-size: .95rem; }
+
+.theme-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--ink); border-radius: 10px; padding: 8px 16px;
+  font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease;
+}
+.theme-btn:hover { background: var(--surface-hover); border-color: var(--border-focus); }
+
+/* التبويبات */
+.tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; padding-bottom: 2px; }
+.tab {
+  background: none; border: none; padding: 12px 20px; font-weight: 600; font-size: 1.05rem;
+  color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.tab .count {
+  font-weight: 500; font-size: .8rem; margin-inline-start: 8px;
+  background: var(--border); padding: 2px 8px; border-radius: 99px; color: var(--ink);
+}
+
+/* المشغّل */
+.player {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 18px; margin-bottom: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.player[hidden] { display: none; }
+.player-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.player-title { font-weight: 700; font-size: 1.2rem; }
+
+.frame {
+  position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+}
+.frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.btn {
+  border: 1px solid var(--border); background: var(--surface); border-radius: 10px; padding: 10px 18px; font-weight: 500;
+  text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+.btn:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-focus); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.primary:hover { opacity: 0.9; }
+.btn.done { background: var(--done-bg); border-color: var(--done-border); color: var(--done); font-weight: 600; }
+.btn:disabled { opacity: .3; cursor: not-allowed; }
+.hint { color: var(--subtle); font-size: .85rem; margin: 12px 0 0; }
+
+/* شريط التقدم */
+.progress { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; color: var(--muted); font-size: .95rem; font-weight: 500; }
+.bar { flex: 1; height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--ink); transition: width .3s ease; }
+
+.tools { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.tools input[type="search"] {
+  flex: 1; min-width: 180px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface); color: var(--ink); transition: border-color 0.2s ease;
+}
+.tools input[type="search"]:focus { border-color: var(--border-focus); outline: none; }
+
+.chip {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px;
+  font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease;
+}
+.chip:hover { background: var(--surface-hover); border-color: var(--border-focus); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+/* الشبكة */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 12px; }
+.tile {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 8px 12px; text-align: center; position: relative; transition: all 0.2s ease;
+}
+.tile .n { display: block; font-size: 1.75rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tile .l { display: block; font-size: .75rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
+.tile:hover { border-color: var(--border-focus); transform: translateY(-2px); background: var(--surface-hover); }
+.tile[aria-current="true"] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+.tile.watched { background: var(--done-bg); border-color: var(--done-border); }
+.tile.watched .n { color: var(--done); }
+.tile.watched .l { color: var(--done); opacity: 0.8; }
+.tile.watched::after { content: "✓"; position: absolute; top: 6px; inset-inline-start: 10px; color: var(--done); font-weight: 700; font-size: .85rem; }
+
+.empty { background: var(--surface); border: 1px dashed var(--border); border-radius: 16px; padding: 48px 20px; text-align: center; color: var(--muted); }
+.empty strong { display: block; color: var(--ink); font-size: 1.2rem; margin-bottom: 6px; }
+
+.noembed { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 20px; text-align: center; background: var(--surface); color: var(--ink); }
+.noembed p { margin: 0; color: var(--muted); }
+.btn.big { padding: 12px 28px; font-size: 1rem; }
+
+@media (prefers-reduced-motion: reduce) { .bar > i, .tile { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>فيديوهات قدرات الجامعيين</h1>
+      <p class="sub">رقم كل مربع هو ترتيب الباركود في الكتاب.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">الوضع النهاري</button>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+
+  <section class="player" id="player" hidden aria-live="polite">
+    <div class="player-top">
+      <div class="player-title" id="pTitle"></div>
+    </div>
+    <div class="frame" id="frame"></div>
+    <div class="actions">
+      <button class="btn" id="prevBtn" type="button">السابق</button>
+      <button class="btn" id="nextBtn" type="button">التالي</button>
+      <button class="btn" id="doneBtn" type="button">تم المشاهدة</button>
+      <button class="btn" id="copyBtn" type="button">نسخ الرابط</button>
+      <a class="btn primary" id="ytLink" href="#" target="_blank" rel="noopener noreferrer">فتح في يوتيوب</a>
+    </div>
+    <p class="hint">إذا ظهر لك «خطأ 153» أو لم يظهر الفيديو، أوقف «التشغيل داخل الصفحة» من الأسفل أو استخدم زر «فتح في يوتيوب».</p>
+  </section>
+
+  <div class="progress"><span id="progText"></span><div class="bar"><i id="progBar"></i></div></div>
+
+  <div class="tools">
+    <input type="search" id="search" placeholder="ابحث برقم الباركود..." inputmode="numeric" aria-label="ابحث برقم الباركود">
+    <button class="chip" id="onlyNew" type="button" aria-pressed="false">غير المشاهَدة فقط</button>
+    <button class="chip" id="embedBtn" type="button" aria-pressed="false">التشغيل داخل الصفحة</button>
+    <button class="chip" id="resetBtn" type="button">مسح التقدم</button>
+  </div>
+
+  <div id="content"></div>
+</div>
+
+<script>
+/* ===== البيانات ===== */
+const SECTIONS = [
+  { id: "verbal", name: "اللفظي", ids: [
+    "3jXzmUBXlQ0","5b7iZTGJ1pk","aX3h33SE_zU","RDbiJa0vH90","_O8Rds9kZQg",
+    "SMQhATrx-u4","Rd9rzXxo7Sc","ncGgCbTEUKM","gM-HHtE1d_Y","Onecsu1jbyU",
+    "cZjEgchrlkM","OCpZGfGD6Q8","dzXQ4u2S6EA","mMDkNaU5eMI","0F10DG2UCK4",
+    "95A9YzjagrY","5Krz4Vd9Jwc","nxT52Oo2uHU","JepkuPHYxQk","yBYBPuncl5s",
+    "-3NY5FkLlm8","DwVXWWb2CI4","DHoq6lXjh2Q","uPN7t_wdBog","9FSIGylsRUM",
+    "MeEU5zjOUpI","tb1Gw5jScWk","GPrTKs_psV8","EyRDoNoIauY","woroLfM-uus",
+    "6fdNs-HHBvY","g6TBzLkIrM0","D6LTd1vC7KI","OKkiw_6AnXE","Slkm2PedeiA",
+    "Khw96ZIgbGc","NPPmVeAj_pQ","WlSvbvystOs","h096cCKiYjo","Akf4OBQaGX0",
+    "_Lkr-_7aT4c","jyFENeix6y4","H7AdEVrpGFo","OJ3qBgUKjUk","wJGiuTyQaKk",
+    "0MPXfS3b7w8","xsORfisao_A","EwGAVww8GlE","yKu2plQquIw","YiKDQPHFuSw",
+    "LLsy_q1JWrg","rCAKlB0E4aQ","d90JN1tYNhg","T2zqYmmEIgI","e2txBqO0Ldo",
+    "XwAXtLNRz2U","OXN3JGCG5Cw","0FOPJ-DcFR4","VrltfZBS2k4","-oPLAaETDRU",
+    "mFJHtvI2mvQ","YX0Vd-fNkUA","ewfnO11RfGc","UgYBerBAvC0","z1sfmbsUul4"
+  ]},
+  { id: "quant", name: "الكمي (الرياضيات)", ids: [
+    "HP0wybueQ6o", // 1
+    "peNunANuJ10", // 2
+    "POP3J7Se4E8", // 3
+    "2XMaTgGXvnA", // 4
+    "OepW1uNBOGo", // 5
+    "jsgGzVZXU-c", // 6
+    "OUKlpeWGwhs", // 7
+    "4HgX3OImgTY", // 8
+    "C49a4CHp7SA", // 9
+    "JVd1wrotP3Y", // 10
+    "O7GZ7teORy8", // 11
+    "r7VWKS3AJB0", // 12
+    "A3yKQZiFkXY", // 13
+    "OgMVq6QE6MY", // 14
+    "TiqLvWl9kvs", // 15
+    "jB517DePJUA", // 16
+    "noWLAbeiYz0", // 17
+    "FcD6VFk-VsY", // 18
+    "Try8XGpLN-o", // 19
+    "8m2cwnhBceA", // 20
+    "PgzvFLdZGOE", // 21
+    "aGwh-TjfXz8", // 22
+    "T2XZhqghuLI", // 23
+    "K0_j8xWyC-M", // 24
+    "UZfGKk2lEmo", // 25
+    "tMtH8dqfhas", // 26
+    "Nz5p89KU6o0", // 27
+    "2MkKQ9NJ6i4", // 28
+    "4HWjkzmUF88"  // 29
+  ]},
+  { id: "reasoning", name: "الاستدلال", ids: [] }
+];
+
+/* ===== الحالة ===== */
+let current = "verbal";
+let playing = null;
+let onlyNew = false;
+let query = "";
+let embedOn = location.protocol.indexOf("http") === 0 && location.origin !== "null";
+let watched = {};
+
+const $ = id => document.getElementById(id);
+const sec = () => SECTIONS.find(s => s.id === current);
+
+function load() {
+  try { watched = JSON.parse(localStorage.getItem("qud-watched") || "{}"); } catch (e) { watched = {}; }
+  try { 
+    const t = localStorage.getItem("qud-theme"); 
+    if (t) document.documentElement.dataset.theme = t; 
+    else document.documentElement.dataset.theme = "dark"; // الداكن افتراضياً
+  } catch (e) {}
+  syncThemeLabel();
+}
+
+function save() { try { localStorage.setItem("qud-watched", JSON.stringify(watched)); } catch (e) {} }
+function isDone(n) { return !!(watched[current] && watched[current][n]); }
+function setDone(n, v) {
+  watched[current] = watched[current] || {};
+  if (v) watched[current][n] = true; else delete watched[current][n];
+  save();
+}
+
+/* ===== الواجهة ===== */
+function renderTabs() {
+  $("tabs").innerHTML = "";
+  SECTIONS.forEach(s => {
+    const b = document.createElement("button");
+    b.className = "tab"; b.type = "button"; b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", s.id === current);
+    b.innerHTML = s.name + '<span class="count">' + s.ids.length + '</span>';
+    b.onclick = () => { current = s.id; playing = null; query = ""; $("search").value = ""; render(); };
+    $("tabs").appendChild(b);
+  });
+}
+
+function renderGrid() {
+  const s = sec(), box = $("content");
+  if (!s.ids.length) {
+    box.innerHTML = '<div class="empty"><strong>لا توجد فيديوهات في ' + s.name + ' بعد</strong>أرسل روابط الباركود وتُضاف هنا.</div>';
+    return;
+  }
+  const grid = document.createElement("div");
+  grid.className = "grid";
+  let shown = 0;
+  s.ids.forEach((id, i) => {
+    const n = i + 1;
+    if (query && !String(n).includes(query.trim())) return;
+    if (onlyNew && isDone(n)) return;
+    shown++;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tile" + (isDone(n) ? " watched" : "");
+    if (n === playing) b.setAttribute("aria-current", "true");
+    b.innerHTML = '<span class="n">' + n + '</span><span class="l">' + (isDone(n) ? "شاهدته" : "باركود") + '</span>';
+    b.setAttribute("aria-label", "الباركود " + n + (isDone(n) ? "، تمت مشاهدته" : ""));
+    b.onclick = () => play(n);
+    grid.appendChild(b);
+  });
+  box.innerHTML = "";
+  if (!shown) box.innerHTML = '<div class="empty"><strong>لا توجد نتائج</strong>جرّب رقمًا آخر أو أوقف فلتر «غير المشاهَدة».</div>';
+  else box.appendChild(grid);
+}
+
+function renderProgress() {
+  const s = sec(), total = s.ids.length;
+  const done = total ? Object.keys(watched[current] || {}).length : 0;
+  $("progText").textContent = total ? ("شاهدت " + done + " من " + total) : "لا توجد فيديوهات";
+  $("progBar").style.width = total ? (done / total * 100) + "%" : "0";
+}
+
+function renderPlayer() {
+  const p = $("player");
+  if (playing == null) { p.hidden = true; $("frame").innerHTML = ""; return; }
+  const s = sec(), id = s.ids[playing - 1];
+  p.hidden = false;
+  $("pTitle").textContent = s.name + " — باركود " + playing;
+  
+  if (embedOn) {
+    const origin = encodeURIComponent(window.location.origin && window.location.origin !== "null" ? window.location.origin : "*");
+    $("frame").innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id +
+      '?rel=0&enablejsapi=1&origin=' + origin + '" title="فيديو ' + playing + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+  } else {
+    $("frame").innerHTML = '<div class="noembed"><p>باركود ' + playing + '</p><a class="btn primary big" href="https://www.youtube.com/watch?v=' + id + '" target="_blank" rel="noopener noreferrer">شاهد الفيديو على يوتيوب</a></div>';
+  }
+  $("ytLink").href = "https://www.youtube.com/watch?v=" + id;
+  $("prevBtn").disabled = playing <= 1;
+  $("nextBtn").disabled = playing >= s.ids.length;
+  const d = isDone(playing);
+  $("doneBtn").textContent = d ? "تمت المشاهدة ✓" : "تم المشاهدة";
+  $("doneBtn").className = "btn" + (d ? " done" : "");
+}
+
+function play(n) {
+  playing = n;
+  render();
+  $("player").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+}
+
+function render() { renderTabs(); renderPlayer(); renderProgress(); renderGrid(); }
+
+/* ===== الأحداث ===== */
+$("prevBtn").onclick = () => play(playing - 1);
+$("nextBtn").onclick = () => play(playing + 1);
+$("doneBtn").onclick = () => { setDone(playing, !isDone(playing)); render(); };
+$("search").oninput = e => { query = e.target.value; renderGrid(); };
+$("onlyNew").onclick = e => { onlyNew = !onlyNew; e.currentTarget.setAttribute("aria-pressed", onlyNew); renderGrid(); };
+$("resetBtn").onclick = () => {
+  if (confirm("مسح علامات المشاهدة في قسم " + sec().name + "؟")) { delete watched[current]; save(); render(); }
+};
+
+function syncThemeLabel() {
+  const dark = document.documentElement.dataset.theme === "dark";
+  $("themeBtn").textContent = dark ? "الوضع النهاري" : "الوضع الليلي";
+}
+
+$("themeBtn").onclick = () => {
+  const dark = document.documentElement.dataset.theme === "dark";
+  const next = dark ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("qud-theme", next); } catch (e) {}
+  syncThemeLabel();
+};
+
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  }
+  return Promise.resolve(legacyCopy(text));
+}
+
+function legacyCopy(text) {
+  const t = document.createElement("textarea");
+  t.value = text; t.setAttribute("readonly", "");
+  t.style.position = "fixed"; t.style.opacity = "0";
+  document.body.appendChild(t); t.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(t);
+  if (!ok) window.prompt("انسخ الرابط من هنا:", text);
+  return ok;
+}
+
+$("copyBtn").onclick = () => {
+  if (playing == null) return;
+  const url = "https://www.youtube.com/watch?v=" + sec().ids[playing - 1];
+  copyText(url).then(() => {
+    const b = $("copyBtn");
+    b.textContent = "تم النسخ ✓";
+    setTimeout(() => { b.textContent = "نسخ الرابط"; }, 1500);
+  });
+};
+
+function syncEmbedBtn() { $("embedBtn").setAttribute("aria-pressed", embedOn); }
+$("embedBtn").onclick = () => {
+  embedOn = !embedOn;
+  try { localStorage.setItem("qud-embed", embedOn ? "1" : "0"); } catch (e) {}
+  syncEmbedBtn(); renderPlayer();
+};
+
+try { const e = localStorage.getItem("qud-embed"); if (e !== null) embedOn = e === "1"; } catch (e) {}
+syncEmbedBtn();
+load();
+render();
+</script>
+</body>
+</html>
